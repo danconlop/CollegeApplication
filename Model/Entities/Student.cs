@@ -13,7 +13,7 @@ namespace Model.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime EnrollmentDate { get; set; }
-        public virtual ICollection<Enrollment> Students { get; set; } //le indicamos a entity que se referencie de uno a muchos a muchos a muchos - Rendimiento
+        public virtual ICollection<Enrollment> Enrollments { get; set; } //le indicamos a entity que se referencie de uno a muchos a muchos a muchos - Rendimiento
         public Student()
         {
 

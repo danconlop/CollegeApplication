@@ -1,4 +1,5 @@
-﻿using CollegeApplication.Services.Abstractions;
+﻿
+using CollegeApplication.Services.Abstractions;
 using System;
 using Model;
 using Share.Dto;
@@ -27,6 +28,39 @@ namespace CollegeApplication.Services.Implementations
             {
                 throw new Exception(e.Message);
             }
+        }
+
+        public StudentDto GetByCodeNumber(string codeNumber)
+        {
+            var student = context.Students.Select(s => new StudentDto
+            {
+                Id = s.Id,
+                FirstName = s.FirstName,
+                LastName = s.LastName,
+                CodeNumber = s.CodeNumber
+            }).FirstOrDefault(s => s.CodeNumber.ToLower().Equals(codeNumber.ToLower()));
+
+            if (student is null)
+                throw new Exception("Student does not exists");
+
+            return student;
+        } 
+
+        public void AssignCourse(CourseAssignmentDto courseAssignment)
+        {
+            var student = context.Students.FirstOrDefault(s => s.CodeNumber.ToLower().Equals(courseAssignment.StudentCodeNumber.ToLower()));
+            var course = context.Courses.FirstOrDefault(c => c.Id.Equals(courseAssignment.CourseId));
+
+            if (student is null)
+                throw new ArgumentNullException("Student does not exist.");
+            if (course is null)
+                throw new ArgumentNullException("Course does not exist.");
+
+            var enrollment = context.Enrollment.Add(new Enrollment(student.Id, course.Id));
+
+            student.Enrollments.Add(enrollment.Entity);
+            course.Enrollments.Add(enrollment.Entity);
+            context.SaveChanges();
         }
     }
 }

@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace Model.Configurations
 {
-    public class StudentConfiguration : IEntityTypeConfiguration<Student>
+
+    public class CourseConfiguration : IEntityTypeConfiguration<Course>
     {
-        public void Configure(EntityTypeBuilder<Student> builder)
+        public void Configure(EntityTypeBuilder<Course> builder)
         {
-            builder.HasIndex(c => c.CodeNumber).IsUnique();
+            builder.HasIndex(c => c.Title).IsUnique();
             //builder.Property(c => c.FirstName).HasMaxLength(10); Agregar max leng
         }
     }

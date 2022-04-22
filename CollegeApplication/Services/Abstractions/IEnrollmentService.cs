@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace CollegeApplication.Services.Abstractions
 {
-    public interface ICourseService
+    interface IEnrollmentService
     {
-        List<CourseDto> GetAll();
-        public void RegisterCourse(CourseRegistryDto courseRegistry);
+        List<EnrollmentDto> GetStudentEnrollments(StudentDto student);
     }
 }

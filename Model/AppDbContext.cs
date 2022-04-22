@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Model.Configuration;
+using Model.Configurations;
 using Model.Entities;
 using System;
+using System.Reflection;
 
 namespace Model
 {
@@ -14,6 +15,10 @@ namespace Model
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new StudentConfiguration());
+            builder.ApplyConfiguration(new CourseConfiguration());
+
+            //builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly()); // Toma las configuraciones en el assembly automaticamente
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)

@@ -19,5 +19,13 @@ namespace Model.Entities
         {
 
         }
+
+        public Enrollment(int studentId, int courseId)
+        {
+            StudentId = studentId;
+            CourseId = courseId;
+        }
+
+
     }
 }

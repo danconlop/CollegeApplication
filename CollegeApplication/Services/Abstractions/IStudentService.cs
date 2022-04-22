@@ -9,6 +9,8 @@ namespace CollegeApplication.Services.Abstractions
 {
     public interface IStudentService
     {
+        void AssignCourse(CourseAssignmentDto courseAssignment);
+        StudentDto GetByCodeNumber(string codeNumber);
         public void RegisterStudent(StudentRegistryDto studentRegistry);
     }
 }

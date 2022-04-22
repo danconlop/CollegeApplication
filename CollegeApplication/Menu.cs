@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CollegeApplication.Services.Abstractions;
 using CollegeApplication.Services.Implementations;
 using Share.Dto;
@@ -9,10 +10,12 @@ namespace CollegeApplication
     {
         private readonly IStudentService _studentService;
         private readonly ICourseService _courseService;
+        private readonly IEnrollmentService _enrollmentService;
         public Menu()
         {
             _studentService = new StudentService();
             _courseService = new CourseService();
+            _enrollmentService = new EnrollmentService();
         }
         public bool Show()
         {
@@ -35,6 +38,10 @@ namespace CollegeApplication
                 case "2":
                     Console.Clear();
                     RegisterCourse();
+                    break;
+                case "3":
+                    Console.Clear();
+                    AssignCourse();
                     break;
                 default:
                     return false;
@@ -105,6 +112,62 @@ namespace CollegeApplication
                 _courseService.RegisterCourse(courseRegistry);
                 Console.WriteLine("Course registered correctly");
             } catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey();
+            }
+        }
+
+        private void AssignCourse()
+        {
+            var courseAssignment = new CourseAssignmentDto();
+
+            Console.WriteLine("Please enter the required information to assign a course");
+            Console.Write("Student Code Number: ");
+
+            try
+            {
+                courseAssignment.StudentCodeNumber = Console.ReadLine();
+                courseAssignment.ValidateStudentCodeNumber();
+
+                var student = _studentService.GetByCodeNumber(courseAssignment.StudentCodeNumber);
+                var studentEnrollments = _enrollmentService.GetStudentEnrollments(student);
+                var courses = _courseService.GetAll();
+
+                Console.WriteLine($"\nStudent Information\nStudent Code Number: {student.CodeNumber}\tName: {student.FirstName} {student.LastName}");
+                Console.WriteLine("\nAvailable courses");
+
+                foreach(var course in courses)
+                {
+                    if (studentEnrollments.FirstOrDefault(c => c.CourseId.Equals(course.Id)) == null)
+                        Console.WriteLine($"Id: {course.Id}\tTitle: {course.Title}\tCredits: {course.Credits}");
+                }
+
+                Console.WriteLine("\nPlease choose an option");
+                Console.Write("Course Id: ");
+                var input = Console.ReadLine();
+
+                if (Int32.TryParse(input, out int courseId))
+                    courseAssignment.CourseId = courseId;
+                else
+                    throw new Exception("'Course Id' must be a number.");
+
+                courseAssignment.ValidateCourseId();
+
+                if (studentEnrollments.FirstOrDefault(c => c.CourseId.Equals(courseId)) == null)
+                {
+                    _studentService.AssignCourse(courseAssignment);
+                    Console.WriteLine("This student has been assigned to the course successfully");
+                } else
+                {
+                    Console.WriteLine("This student already has this course assigned");
+                }
+
+            } catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
