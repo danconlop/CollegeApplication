@@ -16,6 +16,7 @@ namespace Model.Configurations
         {
             builder.HasIndex(c => c.Title).IsUnique();
             //builder.Property(c => c.FirstName).HasMaxLength(10); Agregar max leng
+            builder.Property(c => c.Limit).HasDefaultValue(10);
         }
     }
 }

@@ -9,7 +9,9 @@ namespace CollegeApplication.Services.Abstractions
 {
     public interface ICourseService
     {
+        void EditCourse(CourseDto editCourse);
         List<CourseDto> GetAll();
+        List<CourseDto> GetAvailable(int studentId);
         public void RegisterCourse(CourseRegistryDto courseRegistry);
     }
 }

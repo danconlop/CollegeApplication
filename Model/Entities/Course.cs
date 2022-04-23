@@ -11,6 +11,7 @@ namespace Model.Entities
         public int Id { get; set; }
         public string Title { get; set; }
         public int Credits { get; set; }
+        public int Limit { get; set; }
         public virtual ICollection<Enrollment> Enrollments { get; set; }
         public Course()
         {

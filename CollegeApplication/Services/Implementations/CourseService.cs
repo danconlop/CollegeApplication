@@ -1,4 +1,5 @@
 ﻿using CollegeApplication.Services.Abstractions;
+using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Entities;
 using Share.Dto;
@@ -35,7 +36,8 @@ namespace CollegeApplication.Services.Implementations
             {
                 Id = c.Id,
                 Title = c.Title,
-                Credits = c.Credits
+                Credits = c.Credits,
+                Limit = c.Limit
             }).ToList();
 
             if (!courses.Any())
@@ -44,10 +46,37 @@ namespace CollegeApplication.Services.Implementations
             return courses;
         }
 
-        //public List<CourseDto> GetAllByStudentId(List<EnrollmentDto> enrollments)
-        //{
-        //    //var courses = enrollments.ForEach(e => context.Courses.Where(c => !c.Equals(e.CourseId));
-        //    //var courses = context.Courses.Where(c => !c.Equals(1))
-        //}
+        public List<CourseDto> GetAvailable(int studentId)
+        {
+            var courses = context.Courses.Where(c => !c.Enrollments.Select(e => e.StudentId).Contains(studentId)).Select(c => new CourseDto
+            //var courses = context.Courses.Include(c => c.Enrollments).Where(c => !c.Enrollments.Select(e => e.StudentId).Contains(studentId)).Select(c => new CourseDto
+            {
+                Id = c.Id,
+                Title = c.Title,
+                Credits = c.Credits,
+                Limit = c.Limit
+            }).ToList();
+
+            if (!courses.Any())
+                throw new Exception("There are no courses available.");
+
+            return courses;
+        }
+
+        public void EditCourse(CourseDto editCourse)
+        {
+            var course = context.Courses.Include(c => c.Enrollments).FirstOrDefault(c => c.Id.Equals(editCourse.Id));
+            if (course is null)
+                throw new ApplicationException("Course selected does not exists");
+
+            if (course.Enrollments.Count() > editCourse.Limit)
+                throw new ApplicationException("New course capacity must be higher than the current occupancy");
+            
+            course.Title = editCourse.Title;
+            course.Credits = editCourse.Credits;
+            course.Limit = editCourse.Limit;
+
+            context.SaveChanges();
+        }
     }
 }
